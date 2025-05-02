@@ -4,5 +4,7 @@
 
 body {
   @include body-p;
+  background: $color-base;
   font-family: 'Roboto', sans-serif;
+  color: $color-white;
 }
