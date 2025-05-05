@@ -10,6 +10,7 @@
       :name="name"
       :type="type"
       :required="required"
+      :readonly="readonly"
       :placeholder="label"
       :minlength="minlength"
       :maxlength="maxlength"
@@ -30,6 +31,7 @@ interface Props {
   type?: string
   label?: string
   required?: boolean
+  readonly?: boolean
   minlength?: string | number
   maxlength?: string | number
   icon: string
@@ -39,6 +41,7 @@ withDefaults(defineProps<Props>(), {
   type: 'text',
   label: '',
   required: false,
+  readonly: false,
   minlength: '',
   maxlength: '',
   icon: '',
