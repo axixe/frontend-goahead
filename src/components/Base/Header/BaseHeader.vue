@@ -15,5 +15,11 @@
   display: flex;
   align-items: center;
   gap: $indent-xl;
+
+  @media screen and (max-width: 768px) {
+    h1 {
+      display: none;
+    }
+  }
 }
 </style>
