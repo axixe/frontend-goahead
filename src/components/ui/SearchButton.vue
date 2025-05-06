@@ -1,19 +1,25 @@
 <template>
-  <button class="search-button" type="button">
+  <BaseButton class="search-button" :disabled="disabled">
     <svg class="icon-16">
       <use :href="'/src/assets/images/svg/icon-magnifying-glass.svg#icon'"></use>
     </svg>
-  </button>
+  </BaseButton>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import BaseButton from "@/components/Base/Button/BaseButton.vue";
+
+interface Props {
+  disabled?: boolean
+}
+
+withDefaults(defineProps<Props>(), {
+  disabled: false,
+})
+</script>
 
 <style scoped lang="scss">
 .search-button {
-  padding: 12px;
-  border-radius: $border-radius;
-  background: $color-base-light;
-
   svg {
     fill: $color-white;
   }
