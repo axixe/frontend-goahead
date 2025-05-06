@@ -34,7 +34,7 @@ interface Props {
   readonly?: boolean
   minlength?: string | number
   maxlength?: string | number
-  icon: string
+  icon?: string
 }
 
 withDefaults(defineProps<Props>(), {
