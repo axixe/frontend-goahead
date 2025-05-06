@@ -1,16 +1,16 @@
 <template>
-  <BaseCard v-if="video" class="video-card">
+  <BaseCard class="video-card">
     <template #card-header>
-      <img class="video-card__preview" :src="video.preview" width="198" height="111" alt="preview" />
+      <img class="video-card__preview" :src="preview" width="198" height="111" alt="preview" />
     </template>
 
     <template #card-main-content>
       <div class="video-card__content-wrapper">
-        <p class="video-card__title body-title">{{ video.name }}</p>
+        <p class="video-card__title body-title">{{ videoName }}</p>
 
         <div class="video-card__info-wrapper">
-          <span class="video-card__channel">{{ video.channel }}</span>
-          <span class="video-card__views">{{ video.views }}</span>
+          <span class="video-card__channel">{{ channel }}</span>
+          <span class="video-card__views">{{ refactoredViews }} views</span>
         </div>
       </div>
     </template>
@@ -19,14 +19,24 @@
 
 <script setup lang="ts">
 import BaseCard from '@/components/Base/Card/BaseCard.vue'
-import type VideoCardType from '@/global/types/VideoCardType.ts'
+import { computed } from "vue";
 
 interface Props {
-  video: VideoCardType
+  preview?: string
+  videoName?: string
+  channel?: string
+  views?: string
 }
 
-withDefaults(defineProps<Props>(), {
-  video: () => {},
+const props = withDefaults(defineProps<Props>(), {
+  preview: '',
+  videoName: '',
+  channel: '',
+  views: '',
+})
+
+const refactoredViews = computed(() => {
+  return props.views.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
 })
 </script>
 
