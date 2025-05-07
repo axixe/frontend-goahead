@@ -15,7 +15,7 @@
           v-for="(option, index) in options"
           :key="index"
           :query="option.query"
-          @select:element="(selectedQuery) => selectOption(selectedQuery)"
+          @select:element="(selectedQuery: string) => selectOption(selectedQuery)"
       >
         {{ option.label }}
       </BaseSelectOption>
@@ -44,6 +44,9 @@ withDefaults(defineProps<Props>(), {
 })
 
 const model = defineModel<string>('modelValue')
+const emits = defineEmits<{
+  (e: 'select:element'): void
+}>()
 
 const isSelectActive = ref<boolean>(false)
 
@@ -51,9 +54,10 @@ const toggleSelectActivity = () => {
   isSelectActive.value = !isSelectActive.value
 }
 
-const selectOption = (option) => {
+const selectOption = (option: string) => {
   model.value = option
   toggleSelectActivity()
+  emits('select:element')
 }
 </script>
 
