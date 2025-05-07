@@ -1,3 +1,3 @@
-export default interface SearchVideoType {
+export interface SearchVideoType {
     input: string
 }
