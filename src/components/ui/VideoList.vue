@@ -16,7 +16,7 @@
         v-if="pageTokens.prev"
         @click="updateUrlQuery('pageToken', pageTokens.prev)"
         :disabled="isLoading"
-      >Last page</BaseButton>
+      >Previous page</BaseButton>
       <BaseButton
         v-if="pageTokens.next"
         @click="updateUrlQuery('pageToken', pageTokens.next)"
