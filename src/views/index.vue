@@ -11,20 +11,13 @@
     </BaseForm>
 
     <BasePreloader v-if="isLoading" />
-    <div v-else-if="!!searchResults?.length" class="index-page__video-list">
-      <BaseCardList>
-        <VideoCard
-            v-for="video in enrichedVideos"
-            :key="video.id"
-            :preview="video.snippet.thumbnails.high.url"
-            :video-name="video.snippet.title"
-            :channel="video.snippet.channelTitle"
-            :views="video.statistics?.viewCount"
-        />
-      </BaseCardList>
-
-      <BaseButton @click="loadMoreVideos" :disabled="isLoading">Show more...</BaseButton>
-    </div>
+    <VideoList
+      v-else-if="!!searchResults?.length"
+      :videos="enrichedVideos"
+      :is-loading="isLoading"
+      @load:more-videos="loadMoreVideos"
+      class="index-page__video-list"
+    />
   </div>
 </template>
 
@@ -33,11 +26,9 @@ import BaseForm from "@/components/Base/Form/BaseForm.vue";
 import BaseInput from "@/components/Base/Input/BaseInput.vue";
 import SearchButton from "@/components/ui/SearchButton.vue";
 import BasePreloader from "@/components/Base/Preloader/BasePreloader.vue";
-import BaseCardList from "@/components/Base/Card/BaseCardList.vue";
-import VideoCard from "@/components/ui/VideoCard.vue";
+import VideoList from "@/components/ui/VideoList.vue";
 import useVideoSearch from "@/app/composables/useVideoSearch.ts";
 import useVideoStatistics from "@/app/composables/useVideoStatistics.ts";
-import BaseButton from "@/components/Base/Button/BaseButton.vue";
 
 const { form, search, searchResults, isLoading, loadMore } = useVideoSearch()
 const { enrichedVideos, fetchStatistics } = useVideoStatistics()
