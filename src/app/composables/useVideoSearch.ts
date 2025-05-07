@@ -1,65 +1,43 @@
-import { ref } from 'vue'
-import { $http } from '@/api/apiSettings.ts'
-import useRequest from '@/composables/useRequest.ts'
-import type SearchVideoType from '@/app/types/SearchVideoType.ts'
+import { $http } from '@/api/apiSettings'
+import useRequest from '@/composables/useRequest'
+import { ref } from "vue";
+import useVideoStatistics from "./useVideoStatistics.ts";
+import type {PageTokens} from "../types/PageTokensType.ts";
 
 export default function useVideoSearch() {
-    const form = ref<SearchVideoType>({
-        input: '',
+    const { enrichedVideos, fetchStatistics } = useVideoStatistics()
+    const { execute, isLoading } = useRequest()
+
+    const defaultParams = new URLSearchParams({
+        part: 'snippet',
+        type: 'video',
+        maxResults: '9',
+        key: import.meta.env.VITE_API_TOKEN,
     })
 
-    const { execute, isLoading, errors } = useRequest()
-    const searchResults = ref<any[]>([])
-    const nextPageToken = ref<string | null>(null)
+    const foundedVideos = ref<any[]>([])
+    const pageTokens = ref<PageTokens | null>(null)
 
-    const buildParams = (pageToken?: string) => {
-        const params = new URLSearchParams({
-            part: 'snippet',
-            type: 'video',
-            maxResults: '9',
-            q: form.value.input,
-            key: import.meta.env.VITE_API_TOKEN,
-        })
+    const search = async (query: string) => {
+        if (!query) return
 
-        if (pageToken) {
-            params.append('pageToken', pageToken)
-        }
+        const response = await execute(() => $http.get(`/search?${defaultParams.toString()}&${query}`))
 
-        return params
-    }
+        if (response?.data) {
+            await fetchStatistics(response.data.items)
 
-    const search = async () => {
-        const params = buildParams()
-        const res = await execute(() =>
-            $http.get(`/search?${params.toString()}`)
-        )
-
-        if (res?.data?.items) {
-            searchResults.value = res.data.items
-            nextPageToken.value = res.data.nextPageToken || null
-        }
-    }
-
-    const loadMore = async () => {
-        if (!nextPageToken.value) return
-
-        const params = buildParams(nextPageToken.value)
-        const res = await execute(() =>
-            $http.get(`/search?${params.toString()}`)
-        )
-
-        if (res?.data?.items) {
-            searchResults.value.push(...res.data.items)
-            nextPageToken.value = res.data.nextPageToken || null
+            foundedVideos.value = enrichedVideos.value
+            pageTokens.value = {
+                prev: response.data.prevPageToken || null,
+                next: response.data.nextPageToken || null,
+            }
         }
     }
 
     return {
-        form,
         search,
-        loadMore,
+        foundedVideos,
         isLoading,
-        errors,
-        searchResults,
+        pageTokens,
     }
 }

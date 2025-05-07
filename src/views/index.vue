@@ -1,47 +1,53 @@
 <template>
   <div class="index-page">
-    <BaseForm class="index-page__search-form" @form:submit="searchVideos">
+    <BaseForm class="index-page__search-form" @form:submit="updateUrlQuery('q', formModel)">
       <BaseInput
-        v-model="form.input"
+        v-model="formModel"
         :name="'video-name'"
         :label="'I GONNA WATCH...'"
         class="index-page__input"
       />
-      <SearchButton :disabled="isLoading" @click="searchVideos" />
+      <SearchButton :disabled="isLoading" @click="updateUrlQuery('q', formModel)" />
     </BaseForm>
 
     <BasePreloader v-if="isLoading" />
     <VideoList
-      v-else-if="!!searchResults?.length"
-      :videos="enrichedVideos"
+      v-else-if="!!foundedVideos?.length"
+      :videos="foundedVideos"
       :is-loading="isLoading"
-      @load:more-videos="loadMoreVideos"
+      :page-tokens="pageTokens"
       class="index-page__video-list"
     />
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, watch } from "vue";
 import BaseForm from "@/components/Base/Form/BaseForm.vue";
 import BaseInput from "@/components/Base/Input/BaseInput.vue";
 import SearchButton from "@/components/ui/SearchButton.vue";
 import BasePreloader from "@/components/Base/Preloader/BasePreloader.vue";
 import VideoList from "@/components/ui/VideoList.vue";
 import useVideoSearch from "@/app/composables/useVideoSearch.ts";
-import useVideoStatistics from "@/app/composables/useVideoStatistics.ts";
+import { useUpdateUrlQuery } from "@/composables/useUpdateUrlQuery.js";
+import { useRoute } from "vue-router";
 
-const { form, search, searchResults, isLoading, loadMore } = useVideoSearch()
-const { enrichedVideos, fetchStatistics } = useVideoStatistics()
+const { search, pageTokens, foundedVideos, isLoading } = useVideoSearch()
+const { updateUrlQuery } = useUpdateUrlQuery()
 
-const searchVideos = async () => {
-  await search()
-  await fetchStatistics(searchResults.value)
-}
+const formModel = ref<string>('')
 
-const loadMoreVideos = async () => {
-  await loadMore()
-  await fetchStatistics(searchResults.value)
-}
+const route = useRoute()
+
+watch(
+  () => route.query,
+  async (newQuery: any) => {
+    const formattedQueryLink = new URLSearchParams(newQuery).toString()
+
+    await search(formattedQueryLink);
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped lang="scss">

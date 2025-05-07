@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { $http } from '@/api/apiSettings'
 
 export default function useVideoStatistics() {
-    const enrichedVideos = ref([])
+    const enrichedVideos = ref<any[]>([])
 
     const fetchStatistics = async (videos: any[]) => {
         const videoIds = videos.map(v => v.id.videoId).join(',')
