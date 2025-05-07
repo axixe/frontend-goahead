@@ -11,7 +11,8 @@
     </BaseForm>
 
     <BaseSelect
-        v-model="sortModel"
+      v-if="!isLoading && !!foundedVideos?.length"
+      v-model="sortModel"
       :options="DateSortSelectMock"
       :name="'date-sort'"
       :label="'Sort by'"
