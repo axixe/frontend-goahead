@@ -7,7 +7,7 @@
       :icon="'angle'"
       :label="label"
       class="select__element"
-      @click="toggleSelectActivity"
+      @click="!disabled && toggleSelectActivity()"
     />
 
     <BaseSelectList v-if="isSelectActive">
@@ -33,13 +33,14 @@ import type OptionType from "@/global/types/OptionType.ts";
 interface Props {
   name: string
   label?: string
-  options: OptionType[] | []
+  options?: OptionType[] | []
+  disabled?: boolean
 }
 
 withDefaults(defineProps<Props>(), {
-  name: '',
   label: '',
-  options: () => ([])
+  options: () => ([]),
+  disabled: false,
 })
 
 const model = defineModel<string>('modelValue')
